@@ -40,4 +40,4 @@ do_install_append_class-target() {
 FILES_${PN}-dev += "${includedir}"
 FILES_${PN}-evmctl.static = "${sbindir}/evmctl.static"
 
-BBCLASSEXTEND = "native"
+BBCLASSEXTEND = "native nativesdk"

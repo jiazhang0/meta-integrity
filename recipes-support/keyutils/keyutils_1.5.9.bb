@@ -46,4 +46,4 @@ do_install() {
 
 FILES_${PN} += "${datadir}/request-key-debug.sh"
 
-BBCLASSEXTEND = "native"
+BBCLASSEXTEND = "native nativesdk"
