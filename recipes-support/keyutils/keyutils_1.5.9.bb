@@ -26,7 +26,7 @@ SRC_URI_append_powerpc = "file://keyutils-fix-powerpc-cflags.patch"
 
 S = "${WORKDIR}/git"
 
-inherit autotools
+inherit autotools-brokensep
 
 INSTALL_FLAGS = " \
     LIBDIR=${libdir} \
