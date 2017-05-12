@@ -13,11 +13,13 @@ PACKAGEFUNCS =+ "package_ima_hook"
 python package_ima_hook() {
     packages = d.getVar('PACKAGES', True)
     pkgdest = d.getVar('PKGDEST', True)
+    ima_signing_blacklist = d.getVar('IMA_SIGNING_BLACKLIST', True)
+    ima_keys_dir = d.getVar('IMA_KEYS_DIR', True)
 
     pkg_suffix_blacklist = ('dbg', 'dev', 'doc', 'locale', 'staticdev')
 
     pkg_blacklist = ()
-    with open('${IMA_SIGNING_BLACKLIST}', 'r') as f:
+    with open(ima_signing_blacklist, 'r') as f:
         pkg_blacklist = [ _.strip() for _ in f.readlines() ]
         pkg_blacklist = tuple(pkg_blacklist)
 
@@ -34,7 +36,7 @@ python package_ima_hook() {
 
         pkgdestpkg = os.path.join(pkgdest, pkg)
 
-        cmd = 'evmctl ima_sign --rsa --hashalgo sha256 -n --sigfile --key ${IMA_KEYS_DIR}/ima_privkey.pem '
+        cmd = 'evmctl ima_sign --rsa --hashalgo sha256 -n --sigfile --key %s/ima_privkey.pem ' % (ima_keys_dir)
         sig_list = []
         pkg_sig_list = []
 
@@ -56,8 +58,8 @@ python package_ima_hook() {
                 bb.fatal('Calculate IMA signature for %s failed with exit code %s:\n%s' % \
                     (_, rc, res if res else ""))
 
-            with open(_ + '.sig', 'r') as f:
-                s = base64.b64encode(f.read()) + '|'
+            with open(_ + '.sig', 'rb') as f:
+                s = base64.b64encode(f.read()).decode('ascii') + '|'
                 sig_list.append(s + os.sep + os.path.relpath(_, pkgdestpkg))
 
             os.remove(_ + '.sig')
