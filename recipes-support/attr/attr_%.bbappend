@@ -4,6 +4,8 @@
 
 PACKAGES =+ "${PN}-setfattr.static"
 
+CFLAGS_remove += "-pie -fpie"
+
 do_compile_append_class-target() {
     ${CC} ${CFLAGS} ${LDFLAGS} -static \
         -I${S}/include -L=${libdir} \

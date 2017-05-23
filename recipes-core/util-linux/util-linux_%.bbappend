@@ -4,6 +4,8 @@
 
 PACKAGES =+ "${PN}-switch_root.static"
 
+CFLAGS_remove += "-pie -fpie"
+
 do_compile_append_class-target() {
     ${CC} ${CFLAGS} ${LDFLAGS} -static \
         sys-utils/switch_root.o \

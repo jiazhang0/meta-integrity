@@ -25,6 +25,8 @@ inherit pkgconfig autotools
 # Specify any options you want to pass to the configure script using EXTRA_OECONF:
 EXTRA_OECONF = ""
 
+CFLAGS_remove += "-pie -fpie"
+
 do_compile_append_class-target() {
     ${CC} ${CFLAGS} ${LDFLAGS} -static \
         -include config.h -L=${libdir} \
