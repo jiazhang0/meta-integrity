@@ -28,13 +28,12 @@ sysfs, proc, tmpfs and ramfs, certain disk-based file systems, such as FAT,
 and network file systems, such as NFS, don't support extended attribute,
 meaning IMA appraisal is not available with them.
 
-### Build
-In order to enable this feature, add the path to
-feature/ima/template.conf to the init script.
-
 ### Dependency
 - meta-tpm
   This layer provides the kernel configurations for TPM 1.x enablement.
+
+- meta-tpm2
+  This layer provides the kernel configurations for TPM 2.0 enablement.
 
 ### Use The External IMA Policy
 initramfs is a good place to run some IMA initializations, such as loading
@@ -52,7 +51,7 @@ switch_root from the real rootfs is called and it must be already signed
 properly. Otherwise, switch_root will fail to mount the real rootfs and kernel
 panic will happen due to this failure.
 
-The default external IMA policy is located at /etc/ima_policy.default in
+The default external IMA policy is located at `/etc/ima_policy.default` in
 initramfs. If a custom external IMA policy file exists, the default external
 IMA policy file won't be used any more.
 
@@ -83,10 +82,10 @@ is allowed to define the custom external IMA policy.
 
 - Deploy the custom policy file to installer image
 
-- Create /opt/installer/sbin/config-installer.sh in installer image
+- Create `/opt/installer/sbin/config-installer.sh` in installer image
   Define the IMA_POLICY variable, pointing to the path of policy file.
 
-The custom external IMA policy file is eventually installed to /etc/ima_policy
+The custom external IMA policy file is eventually installed to `/etc/ima_policy`
 in initramfs.
 
 ### IMA Public & Private Key
@@ -95,8 +94,8 @@ regular files in rootfs and one used by RPM to re-sign the executable, shared
 library, kernel module and firmware during RPM installation. Correspondingly,
 the public key is used to verify the IMA signature signed by the private key.
 
-They are installed to /etc/keys/pubkey_evm.pem and
-/etc/keys/privkey_evm.pem correspondingly.
+They are installed to `/etc/keys/pubkey_evm.pem and`
+`/etc/keys/privkey_evm.pem` correspondingly.
 
 In addition, initramfs is a good place to import the IMA public key likewise.
 
@@ -110,13 +109,13 @@ in your product, because they are completely public.
 If the end user wants to use the public & private key owned by self, it is
 allowed to define the use them during the installation.
 
-- Deploy the ima public key and private key to /opt/installer/files/
+- Deploy the ima public key and private key to `/opt/installer/files/`.
 
-- Create /opt/installer/sbin/config-installer.sh in installer image
+- Create `/opt/installer/sbin/config-installer.sh` in installer image
   Define the IMA_PUBKEY variable, pointing to the path of public key file.
   Define the IMA_PRIVKEY variable, pointing to the path of private key file.
 
-Refer to README.user-key-store for the details about how to generate/use
+Refer to meta-signing-key/README.md for the details about how to generate/use
 the keys owned by the user.
 
 Note:
@@ -149,12 +148,12 @@ The following best practices should be applied with using IMA.
 
 - Performance influence
   Moderate policy can make a good balance between the performance and security.
-  Tune the default external policy (/etc/ima_policy.default) and modulate the
+  Tune the default external policy (`/etc/ima_policy.default`) and modulate the
   custom policy for the product requirement.
 
 - Use IMA digital signature to protect the executable
   Using the digital signature scheme DIGSIG is safer than digest-based scheme.
-  Meanwhile, use "appraise_type=imasig" in your IMA policy to enforce running
+  Meanwhile, use `appraise_type=imasig` in your IMA policy to enforce running
   this.
 
 - Use the measurement and audit rules together
@@ -188,3 +187,9 @@ The following best practices should be applied with using IMA.
 [IMA wiki page](https://sourceforge.net/p/linux-ima/wiki/Home/)
 
 [OpenEmbedded layer for EFI Secure Boot](https://github.com/jiazhang0/meta-efi-secure-boot)
+
+[OpenEmbedded layer for signing key management](https://github.com/jiazhang0/meta-signing-key)
+
+[OpenEmbedded layer for TPM 1.x](https://github.com/jiazhang0/meta-tpm)
+
+[OpenEmbedded layer for TPM 2.0](https://github.com/jiazhang0/meta-tpm2)
