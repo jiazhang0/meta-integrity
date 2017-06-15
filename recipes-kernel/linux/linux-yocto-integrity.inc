@@ -1,7 +1,18 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-yocto-integrity:"
 
+IMA = "${@bb.utils.contains('DISTRO_FEATURES', 'ima', '1', '0', d)}"
+
+DEPENDS += "${@'key-store openssl-native' if d.getVar('IMA', True) == '1' else ''}"
+# key-store-ima-cert is required in runtime but we hope it is available
+# in initramfs only. So we don't add it to RDEPENDS_${PN} here.
+
 SRC_URI += " \
-    ${@base_contains('DISTRO_FEATURES', 'ima', 'file://ima.scc', '', d)} \
-    ${@base_contains('DISTRO_FEATURES', 'ima', 'file://ima.cfg', '', d)} \
+    ${@'file://ima.scc file://ima.cfg' if d.getVar('IMA', True) == '1' else ''} \
 "
 
+do_configure_append() {
+    [ -f "${STAGING_DIR_TARGET}${sysconfdir}/keys/system_trusted_key.pem" ] &&
+        openssl x509 -in "${STAGING_DIR_TARGET}${sysconfdir}/keys/system_trusted_key.pem" \
+            -outform DER -out "${B}/system_trusted_cert.x509" ||
+        true
+}

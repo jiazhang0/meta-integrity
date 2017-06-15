@@ -18,5 +18,8 @@ RDEPENDS_${PN} += " \
     ima-evm-utils-evmctl.static \
 "
 
-# Note IMA private key is not available if user key signing model used.
-RRECOMMENDS_${PN} += "key-store-ima-privkey"
+# Note any private key is not available if user key signing model used.
+RRECOMMENDS_${PN} += " \
+    key-store-ima-privkey \
+    key-store-system-trusted-privkey \
+"

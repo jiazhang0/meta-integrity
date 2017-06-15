@@ -31,7 +31,6 @@ SECURITYFS_DIR="${ROOT_DIR}/sys/kernel/security"
 # The policy files are always placed in initramfs
 IMA_POLICY=/etc/ima_policy
 
-PUBKEY_LOADED=0
 SECURITYFS_MOUNTED=0
 
 function print_critical
@@ -75,10 +74,6 @@ function trap_handler
 
     print_verbose "Cleaning up with exit code $err ..."
 
-    if [ $err -ne 0 ]; then
-        [ $PUBKEY_LOADED -eq 1 ] && keyctl revoke $keyring_id
-    fi
-
     [ $SECURITYFS_MOUNTED -eq 1 ] &&
         umount "$SECURITYFS_DIR" 2>"${ROOT_DIR}/dev/null"
 }
@@ -109,23 +104,17 @@ fi
 [ ! -d "$securityfs_dir/ima" ] &&
     print_info "IMA is not enabled. Exiting ..." && exit 2
 
-keyring_id=`keyctl newring _ima @u`
+keyring_id=0x`grep '\skeyring\s*\.ima: ' "${ROOT_DIR}/proc/keys" | awk '{ print $1 }'`
 
-for key in /etc/keys/pubkey_evm*.pem ${ROOT_DIR}/etc/keys/pubkey_evm*.pem; do
+for key in ${ROOT_DIR}/etc/keys/x509_evm*.pem; do
     [ ! -s "$key" ] && continue
 
-    if ! evmctl import --rsa "$key" $keyring_id >"${ROOT_DIR}/dev/null"; then
+    if ! evmctl import "$key" "$keyring_id" >"${ROOT_DIR}/dev/null"; then
         print_critical "Unable to load the public key $key for IMA appraisal"
     else
-        PUBKEY_LOADED=1
-        print_verbose "The public key $key loaded for IMA appraisal"
+        print_verbose "The external public key $key loaded for IMA appraisal"
     fi
 done
-
-[ $PUBKEY_LOADED -ne 1 ] && {
-    print_warning "No public key loaded"
-    exit 3
-}
 
 # Attempt to load the default policy.
 [ ! -f "${IMA_POLICY}" ] && IMA_POLICY="${IMA_POLICY}.default"

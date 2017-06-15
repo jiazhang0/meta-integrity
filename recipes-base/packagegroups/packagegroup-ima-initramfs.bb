@@ -11,5 +11,6 @@ RDEPENDS_${PN} += " \
     util-linux-umount \
     gawk \
     ima-policy \
+    key-store-ima-cert \
     initrdscripts-ima \
 "
