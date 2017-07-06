@@ -23,3 +23,7 @@ RRECOMMENDS_${PN} += " \
     key-store-ima-privkey \
     key-store-system-trusted-privkey \
 "
+
+# Check and deploy keys to ${DEPLOY_DIR_IMAGE}
+inherit user-key-store
+do_install[postfuncs] += "check_deploy_keys "
