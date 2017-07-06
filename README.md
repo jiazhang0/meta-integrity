@@ -80,20 +80,18 @@ The default external IMA policy enables the following constraint conditions:
 If the default external IMA policy cannot meet the protection requirement, it
 is allowed to define the custom external IMA policy.
 
-- Deploy the custom policy file to installer image
+- Update the recipes-support/ima-policy/files/ima_policy.default directly;
 
-- Create `/opt/installer/sbin/config-installer.sh` in installer image
-  Define the IMA_POLICY variable, pointing to the path of policy file.
+Or:
 
-The custom external IMA policy file is eventually installed to `/etc/ima_policy`
-in initramfs.
+- Create custom external IMA policy file and install it as `/etc/ima_policy`
+  in initramfs.
 
 ##### IMA certificate & private Key
-The private key come in two flavors; one used by an installer to sign all
-regular files in rootfs and one used by RPM to re-sign the executable, shared
-library, kernel module and firmware during RPM installation. Correspondingly,
-the IMA certificate is used to verify the IMA signature signed by the private
-key.
+The private key come in two flavors; one used for signing all regular files
+in rootfs and one used by RPM to re-sign the executable, shared library,
+kernel module and firmware during RPM installation. Correspondingly, the
+public key is used to verify the IMA signature signed by the private key.
 
 In addition, initramfs is a good place to import the IMA certificate likewise.
 
