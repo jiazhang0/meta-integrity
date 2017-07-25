@@ -104,8 +104,8 @@ in your product, because they are completely public.
 ### Best practice
 The following best practices should be applied with using IMA.
 
-- Enable UEFI/MOK secure boot
-  UEFI/MOK secure boot can verify the integrity of initramfs, providing the
+- Enable EFI Secure Boot
+  EFI Secure Boot can verify the integrity of initramfs, providing the
   protection against tampering of the external IMA policy files and IMA public
   keys stored in initramfs.
 
